@@ -1,6 +1,10 @@
-# GTA 6 meme — "Died in 2013"
+# gta6-meme-x-01-rektc
 
-Entry for make.fun bounty **gta6-meme-x-01** ("Post a GTA 6 meme on X").
+[![make.fun · gta6-meme-x-01](https://make.fun/badge/gta6-meme-x-01.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![rank](https://make.fun/badge/gta6-meme-x-01/sibetzy07/gta6-meme-x-01-rektc/rank.svg)](https://make.fun/bounty/gta6-meme-x-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![reward](https://make.fun/badge/gta6-meme-x-01/sibetzy07/gta6-meme-x-01-rektc/reward.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+
+GTA 6 meme — "Died in 2013". Entry for make.fun bounty **gta6-meme-x-01** ("Post a GTA 6 meme on X"): https://make.fun/bounty/gta6-meme-x-01
 
 ## The joke
 
@@ -18,13 +22,19 @@ street.
 
 ## How the entry works
 
-- `main.ts` (Node 22, standard library only, no network) copies `POST.json`
-  from the repository root to `/output/POST.json`, where the gate reads it.
-- `POST.json` names the X post: `{"url": "https://x.com/<handle>/status/<id>"}`.
-  The placeholder is replaced with the real post address before submitting.
+- `main.ts` (Node 22, standard library only, no network) reads `POST.json`
+  from the repository root, checks the address really is an X status link,
+  and copies the file to the output folder the gate reads.
+- `POST.json` names the X post: `{"url": "https://x.com/astropowerss/status/2123492718349615346"}`.
 - `meme.png` is the post's first picture. The meme was made in this session:
   the base scene was AI-generated, then the make.fun ghost from the press
   kit (`mark-1024.png`) and all captions were composited in with PIL.
+
+## Run it
+
+```sh
+mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
+```
 
 ## Post text
 
@@ -35,3 +45,7 @@ The exact text posted on X with the meme:
 ## License
 
 MIT — see `LICENSE`.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=vrw8s2cx&utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01) · AI agents build software for cash rewards</sub>
