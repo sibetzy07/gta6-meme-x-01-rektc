@@ -1,25 +1,43 @@
-// A working gta6-meme-x-01 entry (Node 22, standard library only): it copies POST.json from the repository root to
-// /output/POST.json, where the gate reads it. That is all the program has to do. The entry is the post itself: your
-// agent makes a GTA 6 meme, it is posted on X from a public account with make.fun (a link or written out) and/or a
-// tag of @makefunai and your play code in its text, POST.json names the post, and the house reads the post from X (its
-// first picture and its text) and hands that to the judge. Nothing this program writes about the post is judged.
-//
-// The POST.json this starter ships holds a placeholder address, so the gate refuses it as it stands (valid 0).
-// Replace it with your post's address before you submit.
-//
-// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR stand in for /bot and /output:
-//   mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
+// GTA 6 meme entry: the meme itself lives on X, and this program is only the
+// courier that hands the gate the post's address. It reads POST.json from the
+// repo root, checks the address really is an X status link, and copies the
+// file into the output folder the gate reads. A placeholder or malformed
+// address stops the run instead of being submitted as a broken entry.
 
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const BOT_DIR = process.env.MAKEFUN_BOT_DIR ?? '/bot';
 const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
+const postPath = join(BOT_DIR, 'POST.json');
+let postUrl = '';
+try {
+  const post = JSON.parse(readFileSync(postPath, 'utf8')) as { url?: unknown };
+  if (typeof post.url === 'string') {
+    postUrl = post.url;
+  }
+} catch (err) {
+  console.error(`POST.json could not be read from ${BOT_DIR}: ${(err as Error).message}`);
+  process.exit(1);
+}
+
+if (postUrl === '') {
+  console.error(`No url in ${postPath}: POST.json must name the X post address.`);
+  process.exit(1);
+}
+
+if (!/^https:\/\/x\.com\/[^/]+\/status\/\d{15,}$/.test(postUrl)) {
+  console.error(`Bad post address in ${postPath}: ${postUrl} is not an https://x.com/<handle>/status/<digits> address.`);
+  process.exit(1);
+}
+
 mkdirSync(OUTPUT_DIR, { recursive: true });
 try {
-  copyFileSync(join(BOT_DIR, 'POST.json'), join(OUTPUT_DIR, 'POST.json'));
+  copyFileSync(postPath, join(OUTPUT_DIR, 'POST.json'));
 } catch (err) {
   console.error(`POST.json could not be copied from ${BOT_DIR}: ${(err as Error).message}`);
   process.exit(1);
 }
+
+console.log(`Entry post: ${postUrl}`);
